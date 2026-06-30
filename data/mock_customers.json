@@ -1,0 +1,30 @@
+[
+  {
+    "customer_id": "CUST-1001",
+    "name": "Acme GmbH",
+    "tier": "premium",
+    "region": "Germany",
+    "account_status": "active"
+  },
+  {
+    "customer_id": "CUST-1002",
+    "name": "Beta Retail",
+    "tier": "standard",
+    "region": "Netherlands",
+    "account_status": "active"
+  },
+  {
+    "customer_id": "CUST-1003",
+    "name": "Nordic Cloud AG",
+    "tier": "enterprise",
+    "region": "Germany",
+    "account_status": "active"
+  },
+  {
+    "customer_id": "CUST-1004",
+    "name": "Alpine Systems",
+    "tier": "premium",
+    "region": "Austria",
+    "account_status": "at_risk"
+  }
+]
