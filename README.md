@@ -7,8 +7,11 @@ The system receives an operational issue, classifies the issue type, retrieves r
 ## Current Status
 
 Week 0: Project setup and FastAPI health check.
+
 Week 1: Domain design, issue type definitions, and Pydantic schemas.
+
 Week 2: Business tool layer — customer profile lookup, SLA policy check, document search, and ticket draft generation.
+
 Week 3: RAG retrieval layer — document chunking and TF-IDF based search.
 
 ## Tech Stack
@@ -33,10 +36,11 @@ User issue input
 
 ## Local Development
 
-```bash
+````bash
 uv run uvicorn app.main:app --reload
 
 ## Problem
+````
 
 Internal operations teams often receive messy customer or business issue reports through email, support tools, or chat messages.
 
