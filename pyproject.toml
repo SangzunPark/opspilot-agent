@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.138.0",
+    "langgraph>=1.2.8",
     "pydantic>=2.13.4",
     "python-dotenv>=1.2.2",
     "scikit-learn>=1.9.0",
