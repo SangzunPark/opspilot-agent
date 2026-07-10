@@ -6,13 +6,11 @@ The system receives an operational issue, classifies the issue type, retrieves r
 
 ## Current Status
 
-Week 0: Project setup and FastAPI health check.
-
-Week 1: Domain design, issue type definitions, and Pydantic schemas.
-
-Week 2: Business tool layer — customer profile lookup, SLA policy check, document search, and ticket draft generation.
-
-Week 3: RAG retrieval layer — document chunking and TF-IDF based search.
+- **Week 0**: Project setup and FastAPI health check.
+- **Week 1**: Domain design, issue type definitions, and Pydantic schemas.
+- **Week 2**: Business tool layer — customer profile lookup, SLA policy check, document search, and ticket draft generation.
+- **Week 3**: RAG retrieval layer — document chunking and TF-IDF based search.
+- **Week 4**: LangGraph workflow MVP — end-to-end triage pipeline with POST /triage endpoint.
 
 ## Tech Stack
 
@@ -96,3 +94,21 @@ Current retrieval flow:
 3. Build a TF-IDF index
 4. Search relevant chunks for an issue query
 5. Return top-k document snippets to the agent workflow
+
+## Agent Workflow MVP
+
+The Week 4 MVP connects the existing schemas, tools, and retrieval layer into a LangGraph workflow.
+
+Current workflow:
+
+1. Classify the issue type
+2. Retrieve relevant internal policy documents
+3. Look up the customer profile
+4. Check SLA policy
+5. Assess risk and escalation requirement
+6. Create a ticket draft
+7. Generate a structured triage response
+
+The current implementation is deterministic and does not use an LLM yet. This makes the workflow easier to test and debug before replacing selected nodes with LLM-based reasoning in later versions.
+
+The workflow is implemented as a LangGraph `StateGraph`, where each node receives and updates a shared `OpsAgentState`.
