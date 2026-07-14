@@ -41,7 +41,7 @@ def test_triage_response_accepts_valid_output() -> None:
         tools_called=[
             ToolCallRecord(
                 tool_name="get_customer_profile",
-                input={"customer_id": "CUST-1001"},
+                input=str({"customer_id": "CUST-1001"}),
                 output_summary="Customer tier is premium.",
                 success=True,
             )

@@ -12,6 +12,7 @@ The system receives an operational issue, classifies the issue type, retrieves r
 - **Week 3**: RAG retrieval layer — document chunking and TF-IDF based search.
 - **Week 4**: LangGraph workflow MVP — end-to-end triage pipeline with POST /triage endpoint.
 - **Week 5**: LLM integration and multi-mode comparison — three workflow modes available via POST /triage?mode=.
+- **Week 6**: Observability and deployment setup — run-level JSONL logging with `run_id`, mode, retrieved sources, tool calls, LLM/fallback flags, latency tracking, `GET /runs/{run_id}` trace lookup endpoint, and Docker/Docker Compose support.
 
 ## Tech Stack
 
@@ -158,3 +159,82 @@ Key difference from `simple_rag`:
 
 Week 7 evaluation compares `simple_rag` vs `agentic_llm` on the same dataset
 to measure the real-world impact of tool-augmented agentic design.
+
+## Observability and Run Logging
+
+OpsPilot records each triage execution as a JSONL run log, giving every request
+an end-to-end trace that can be retrieved later for debugging and evaluation.
+
+Each run captures:
+
+- **run ID** — unique identifier for the execution
+- **workflow mode** — `simple_rag`, `baseline`, or `agentic_llm`
+- **input payload** — the original triage request
+- **workflow steps** — the high-level stages that were executed
+- **retrieved sources** — internal policy documents used as evidence
+- **tool calls** — which tools ran, with inputs and output summaries
+- **llm_used** — whether the mode invoked an LLM
+- **fallback_used** — whether deterministic fallback was triggered
+- **latency_ms** — end-to-end latency in milliseconds
+- **final_response** — the full response returned to the user
+- **errors** — any errors captured during the run
+
+**Example response (`POST /triage`):**
+
+```json
+{
+  "run_id": "d8691cac-cd28-4270-9cbf-20da5d270566",
+  "mode": "agentic_llm",
+  "latency_ms": 8,
+  "issue_type": "billing_dispute",
+  "customer_tier": "premium",
+  "escalation_required": true
+}
+```
+
+**Retrieve a run log:**
+
+```
+GET /runs/{run_id}
+```
+
+Logs are stored locally at:
+
+```
+logs/runs.jsonl
+```
+
+This logging layer is intentionally simple and file-based for the MVP.
+It can later be replaced with PostgreSQL, OpenTelemetry, or LangSmith
+without changing the workflow code.
+
+---
+
+## Docker
+
+Build and run the API with Docker Compose:
+
+```bash
+docker compose build
+docker compose up
+```
+
+**Health check:**
+
+```bash
+curl http://localhost:8000/health
+```
+
+**Run triage:**
+
+```bash
+curl -X POST "http://localhost:8000/triage?mode=agentic_llm" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customer_id": "CUST-1001",
+    "issue_text": "Customer says the invoice amount is wrong and may cancel.",
+    "channel": "email"
+  }'
+```
+
+
