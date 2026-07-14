@@ -17,7 +17,7 @@ class RetrievedSource(BaseModel):
 # 각 노드가 도구를 호출할 때마다 state.tools_called.append(ToolCallRecord(...)) 가 기록
 class ToolCallRecord(BaseModel):
     tool_name: str = Field(description="Name of the tool that was called.")
-    input: dict = Field(default_factory=dict, description="Tool input arguments.")
+    input: str = Field(default="", description="Tool input as string.")
     output_summary: str = Field(description="Short summary of the tool output.")
     success: bool = Field(description="Whether the tool call succeeded.")
 

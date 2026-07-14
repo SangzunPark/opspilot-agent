@@ -57,7 +57,7 @@ def retrieve_docs_node(state: OpsAgentState) -> OpsAgentState:
     state.tools_called.append(
         ToolCallRecord(
             tool_name="search_internal_docs",
-            input={"query": query, "top_k": 3},
+            input=str({"query": query, "top_k": 3}),
             output_summary=f"Retrieved {len(results)} internal document snippets.",
             success=True,
         )
@@ -73,7 +73,7 @@ def get_customer_profile_node(state: OpsAgentState) -> OpsAgentState:
         state.tools_called.append(
             ToolCallRecord(
                 tool_name="get_customer_profile",
-                input={"customer_id": None},
+                input=str({"customer_id": None}),
                 output_summary="No customer ID provided.",
                 success=False,
             )
@@ -86,7 +86,7 @@ def get_customer_profile_node(state: OpsAgentState) -> OpsAgentState:
     state.tools_called.append(
         ToolCallRecord(
             tool_name="get_customer_profile",
-            input={"customer_id": state.customer_id},
+            input=str({"customer_id": state.customer_id}),
             output_summary=f"Customer tier is {customer.tier}.",
             success=True,
         )
@@ -106,10 +106,10 @@ def check_sla_node(state: OpsAgentState) -> OpsAgentState:
     state.tools_called.append(
         ToolCallRecord(
             tool_name="check_sla_policy",
-            input={
+            input=str({
                 "customer_tier": state.customer_tier,
                 "issue_type": state.issue_type,
-            },
+            }),
             output_summary=(
                 f"{result.response_time}. {result.escalation_guidance}"
             ),
@@ -165,11 +165,11 @@ def create_ticket_node(state: OpsAgentState) -> OpsAgentState:
     state.tools_called.append(
         ToolCallRecord(
             tool_name="create_ticket_draft",
-            input={
+            input=str({
                 "issue_type": state.issue_type,
                 "urgency": state.urgency,
                 "escalation_required": state.escalation_required,
-            },
+            }),
             output_summary=f"Created ticket draft for {draft.assigned_team}.",
             success=True,
         )
