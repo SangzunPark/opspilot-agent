@@ -11,6 +11,7 @@ The system receives an operational issue, classifies the issue type, retrieves r
 - **Week 2**: Business tool layer — customer profile lookup, SLA policy check, document search, and ticket draft generation.
 - **Week 3**: RAG retrieval layer — document chunking and TF-IDF based search.
 - **Week 4**: LangGraph workflow MVP — end-to-end triage pipeline with POST /triage endpoint.
+- **Week 5**: LLM integration and multi-mode comparison — three workflow modes available via POST /triage?mode=.
 
 ## Tech Stack
 
@@ -112,3 +113,48 @@ Current workflow:
 The current implementation is deterministic and does not use an LLM yet. This makes the workflow easier to test and debug before replacing selected nodes with LLM-based reasoning in later versions.
 
 The workflow is implemented as a LangGraph `StateGraph`, where each node receives and updates a shared `OpsAgentState`.
+
+## Workflow Modes
+
+OpsPilot supports three workflow modes accessible via `POST /triage?mode=`.
+
+### `simple_rag`
+
+Retrieves relevant internal policy documents using TF-IDF search and passes
+them to the LLM along with the issue text. The LLM handles the full triage
+decision including issue classification, urgency assessment, and recommendation
+generation.
+
+This mode does **not** use customer profile tools or SLA policy tools.
+As a result, `customer_tier` is always `unknown` and `tools_called` is always
+empty. This means escalation decisions may be incorrect when customer tier
+matters.
+
+### `baseline`
+
+The deterministic Week 4 workflow. Uses LangGraph, typed tools, RAG retrieval,
+SLA rules, and rule-based recommendation generation. No LLM involved.
+Customer tier and urgency are verified through actual tools.
+
+### `agentic_llm`
+
+The full agentic workflow. Keeps customer lookup, SLA checks, retrieval,
+risk assessment, and ticket routing deterministic. Uses an LLM only for
+structured recommendation generation.
+
+The LLM receives verified customer tier, SLA results, retrieved policy
+documents, and tool call summaries as context — then generates grounded
+recommendations with specific next steps.
+
+Key difference from `simple_rag`:
+
+| | simple_rag | agentic_llm |
+|---|---|---|
+| customer_tier | always unknown | verified via DB tool |
+| urgency | LLM estimate | SLA rule applied |
+| escalation | may be incorrect | deterministic rule |
+| tools_called | [] | 4 tools |
+| confidence | ~0.85 | ~0.95 |
+
+Week 7 evaluation compares `simple_rag` vs `agentic_llm` on the same dataset
+to measure the real-world impact of tool-augmented agentic design.
