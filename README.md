@@ -13,6 +13,7 @@ The system receives an operational issue, classifies the issue type, retrieves r
 - **Week 4**: LangGraph workflow MVP — end-to-end triage pipeline with POST /triage endpoint.
 - **Week 5**: LLM integration and multi-mode comparison — three workflow modes available via POST /triage?mode=.
 - **Week 6**: Observability and deployment setup — run-level JSONL logging with `run_id`, mode, retrieved sources, tool calls, LLM/fallback flags, latency tracking, `GET /runs/{run_id}` trace lookup endpoint, and Docker/Docker Compose support.
+- **Week 6.5**: Conditional routing — updated the `agentic_llm` workflow so ticket draft creation is triggered only when `escalation_required=true`, demonstrating state-dependent execution paths.
 
 ## Tech Stack
 
@@ -238,3 +239,15 @@ curl -X POST "http://localhost:8000/triage?mode=agentic_llm" \
 ```
 
 
+## Conditional Execution in the Agentic Workflow
+
+The `agentic_llm` mode uses conditional routing after risk assessment.
+
+After the workflow checks customer tier, SLA policy, and risk signals, it decides whether a ticket draft should be created:
+
+```text
+assess_risk
+├── escalation_required = true
+│   └── create_ticket → generate_llm_response
+└── escalation_required = false
+    └── generate_llm_response

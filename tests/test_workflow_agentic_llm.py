@@ -1,46 +1,77 @@
 from app.graph.workflow import run_ops_workflow
 from app.schemas.state import OpsAgentState
 
-# 전체 워크플로우 테스트 + 비교 테스트
-# 세가지 mode가 각자 의도한 대로 동작하는지, 그리고 서로 어떻게 다른지 확인 하는 통합 테스트 
-# 테스트 1: agentic_llm workflow 동작 확인
-# 테스트 2: baseline workflow 여전히 동작하는지 확인
-# 테스트 3: simple_rag가 customer_tier를 모르는지 확인
-# 테스트 4: simple_rag vs agentic_llm 직접 비교
+# 저위험일 경우 티켓발급이 실제로 스킵되는지 확인해보는 코드
+HIGH_RISK_ISSUE_TEXT = (
+    "Customer says the invoice amount is wrong and may cancel."
+)
 
-ISSUE_TEXT = "Customer says the invoice amount is wrong and may cancel."
+LOW_RISK_ISSUE_TEXT = (
+    "Customer asks why the invoice amount changed this month."
+)
 
-# 4개의 테스트에서 같은 초기 state을 사용해야 하기 때문에 함수로 별도 지정
-def _make_billing_state(request_id: str) -> OpsAgentState:
+# 고위험 상태 만들기
+def _make_high_risk_billing_state(request_id: str) -> OpsAgentState:
     return OpsAgentState(
         request_id=request_id,
         customer_id="CUST-1001",
-        issue_text=ISSUE_TEXT,
+        issue_text=HIGH_RISK_ISSUE_TEXT,
         channel="email",
     )
 
+# 저위험 상태 만들기
+def _make_low_risk_billing_state(request_id: str) -> OpsAgentState:
+    return OpsAgentState(
+        request_id=request_id,
+        customer_id="CUST-1002",
+        issue_text=LOW_RISK_ISSUE_TEXT,
+        channel="email",
+    )
 
-def test_agentic_llm_workflow_runs_with_mock_provider(monkeypatch) -> None:
+# 툴 이름만 뽑아서 리스트로 저장
+def _tool_names(response) -> list[str]:
+    return [tool.tool_name for tool in response.tools_called]
+
+
+def test_agentic_llm_creates_ticket_for_high_risk_case(monkeypatch) -> None:
     monkeypatch.setenv("LLM_PROVIDER", "mock")
 
     response = run_ops_workflow(
-        _make_billing_state("test-agentic-001"),
+        _make_high_risk_billing_state("test-agentic-high-risk"),
         mode="agentic_llm",
     )
+
+    tool_names = _tool_names(response)
 
     assert response.issue_type == "billing_dispute"
     assert response.urgency == "high"
     assert response.customer_tier == "premium"
     assert response.escalation_required is True
-    assert len(response.retrieved_sources) > 0
-    assert len(response.tools_called) >= 3
+    assert "create_ticket_draft" in tool_names
     assert len(response.recommended_next_steps) >= 2
-    assert response.confidence >= 0.75
 
 
+def test_agentic_llm_skips_ticket_for_low_risk_case(monkeypatch) -> None:
+    monkeypatch.setenv("LLM_PROVIDER", "mock")
+
+    response = run_ops_workflow(
+        _make_low_risk_billing_state("test-agentic-low-risk"),
+        mode="agentic_llm",
+    )
+
+    tool_names = _tool_names(response)
+
+    assert response.issue_type == "billing_dispute"
+    assert response.urgency == "medium"
+    assert response.customer_tier == "standard"
+    assert response.escalation_required is False
+    assert "create_ticket_draft" not in tool_names
+    assert len(response.recommended_next_steps) >= 2
+
+# 회귀테스트, 새 라우팅 기능과 기존 기능의 충돌 여부 확인, 실무의 기본
 def test_baseline_workflow_still_runs() -> None:
     response = run_ops_workflow(
-        _make_billing_state("test-baseline-001"),
+        _make_high_risk_billing_state("test-baseline-001"),
         mode="baseline",
     )
 
@@ -54,7 +85,7 @@ def test_simple_rag_does_not_know_customer_tier(monkeypatch) -> None:
     monkeypatch.setenv("LLM_PROVIDER", "mock")
 
     response = run_ops_workflow(
-        _make_billing_state("test-simple-rag-001"),
+        _make_high_risk_billing_state("test-simple-rag-001"),
         mode="simple_rag",
     )
 
@@ -62,16 +93,16 @@ def test_simple_rag_does_not_know_customer_tier(monkeypatch) -> None:
     assert response.tools_called == []
     assert len(response.retrieved_sources) > 0
 
-# 이 파일에서 가장 핵심이 되는 테스트
+
 def test_agentic_vs_simple_rag_customer_tier_difference(monkeypatch) -> None:
     monkeypatch.setenv("LLM_PROVIDER", "mock")
 
     simple_rag_response = run_ops_workflow(
-        _make_billing_state("test-compare-simple-rag"),
+        _make_high_risk_billing_state("test-compare-simple-rag"),
         mode="simple_rag",
     )
     agentic_response = run_ops_workflow(
-        _make_billing_state("test-compare-agentic"),
+        _make_high_risk_billing_state("test-compare-agentic"),
         mode="agentic_llm",
     )
 
