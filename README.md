@@ -252,7 +252,7 @@ assess_risk
 │   └── create_ticket → generate_llm_response
 └── escalation_required = false
     └── generate_llm_response
-
+```
 
 ### Preliminary Evaluation Results
 
