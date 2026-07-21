@@ -265,3 +265,37 @@ The `agentic_llm` mode achieved 100% accuracy across customer tier, urgency, esc
 This supports the main design point: the difference is not simply data access or retrieval quality. The agentic workflow maintains intermediate state, passes tool outputs into later steps, and changes the execution path based on previous results.
 
 Latency was measured in mock mode and does not represent real LLM API latency.
+
+### Full Mock-Mode Evaluation
+
+After validating the evaluation pipeline with the initial 10-case preliminary evaluation, I expanded the dataset to 30 synthetic operations triage cases. The expanded dataset covers billing disputes, technical outages, refund requests, account access issues, cancellation risk, and ambiguous requests across standard, premium, enterprise, and unknown customer contexts.
+
+The Week 7B evaluation was run in mock mode to make the comparison deterministic, reproducible, and focused on workflow structure rather than LLM text variability.
+
+| Metric | simple_rag | baseline | agentic_llm |
+|---|---:|---:|---:|
+| Schema validity | 100.0% | 100.0% | 100.0% |
+| Issue type accuracy | 96.7% | 96.7% | 96.7% |
+| Customer tier accuracy | 3.3% | 100.0% | 100.0% |
+| Urgency accuracy | 40.0% | 96.7% | 96.7% |
+| Escalation accuracy | 56.7% | 100.0% | 100.0% |
+| Retrieval hit rate | 98.3% | 98.3% | 98.3% |
+| Required tool call rate | 0.0% | 100.0% | 100.0% |
+| Conditional branch accuracy | 43.3% | 56.7% | 100.0% |
+| Tool dependency validity | 0.0% | 100.0% | 100.0% |
+| Execution path contains rate | 18.1% | 100.0% | 100.0% |
+| Execution path excludes rate | 100.0% | 56.7% | 100.0% |
+| Average tool calls | 0.00 | 4.00 | 3.57 |
+| Average execution path length | 2.00 | 7.00 | 6.57 |
+| Error rate | 0.0% | 0.0% | 0.0% |
+
+The results show that `simple_rag` retrieved relevant policy documents in most cases, with a 98.3% retrieval hit rate. However, it had no tool calls, no valid tool dependency chain, and limited conditional branch accuracy.
+
+The `baseline` workflow used the expected tools and achieved strong output accuracy, but it followed the full workflow path unconditionally. As a result, it could not reliably skip unnecessary actions such as ticket draft creation in low-risk cases.
+
+The `agentic_llm` workflow achieved 100% customer tier accuracy, 100% escalation accuracy, 100% required tool call rate, 100% conditional branch accuracy, and 100% tool dependency validity in the 30-case mock-mode evaluation.
+
+These results support the main design point of the project: the difference between standard RAG+LLM and an agentic workflow is not simply retrieval quality or data access. The agentic workflow maintains intermediate state, uses tool outputs in later decisions, and changes the execution path based on previous results.
+
+Latency was measured in mock mode and does not represent real LLM API latency.
+
