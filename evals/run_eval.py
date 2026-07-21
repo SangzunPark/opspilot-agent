@@ -310,9 +310,12 @@ def save_results(
     mode: WorkflowMode,
     results: list[dict[str, Any]],
     summary: dict[str, Any],
+    output_suffix: str | None = None,
 ) -> Path:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    output_path = RESULTS_DIR / f"{mode}_results.json"
+
+    suffix = f"_{output_suffix}" if output_suffix else ""
+    output_path = RESULTS_DIR / f"{mode}{suffix}_results.json"
 
     payload = {
         "mode": mode,
@@ -338,6 +341,16 @@ def parse_args() -> argparse.Namespace:
         choices=["mock", "openai"],
         default="mock",
     )
+    parser.add_argument(
+        "--dataset-path",
+        default="evals/dataset.jsonl",
+        help="Path to evaluation dataset in JSONL format.",
+    )
+    parser.add_argument(
+        "--output-suffix",
+        default=None,
+        help="Optional suffix for the output filename.",
+    )
     return parser.parse_args()
 
 
@@ -346,7 +359,8 @@ def main() -> None:
 
     os.environ["LLM_PROVIDER"] = args.llm_provider
 
-    cases = load_dataset(DATASET_PATH)
+    dataset_path = Path(args.dataset_path)
+    cases = load_dataset(dataset_path)
 
     results = [
         run_case(case=case, mode=args.mode)
@@ -357,6 +371,7 @@ def main() -> None:
         mode=args.mode,
         results=results,
         summary=summary,
+        output_suffix=args.output_suffix,
     )
 
     print(f"Saved {args.mode} results to {output_path}")

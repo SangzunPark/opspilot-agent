@@ -1,0 +1,2575 @@
+{
+  "mode": "simple_rag",
+  "summary": {
+    "total_cases": 30,
+    "error_rate": 0.0,
+    "average_latency_ms": 3930.0333333333333,
+    "average_tool_call_count": 0.0,
+    "average_execution_path_length": 2.0,
+    "schema_valid": 1.0,
+    "issue_type_correct": 0.9666666666666667,
+    "customer_tier_correct": 0.03333333333333333,
+    "urgency_correct": 0.7666666666666667,
+    "escalation_correct": 0.7333333333333333,
+    "retrieval_hit_rate": 0.9833333333333333,
+    "required_tool_call_rate": 0.0,
+    "conditional_branch_correct": 0.43333333333333335,
+    "tool_dependency_valid": 0.0,
+    "execution_path_contains_rate": 0.1811111111111111,
+    "execution_path_excludes_rate": 1.0
+  },
+  "results": [
+    {
+      "case_id": "case_001_premium_billing_cancel",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "Customer says the invoice amount is wrong and may cancel.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "premium",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "billing_policy.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "high",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.2999
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.2573
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2422
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Verify the invoice ID and details with the customer.",
+          "Check the customer's account status and contract terms.",
+          "Review any applied discounts and recent subscription changes.",
+          "Escalate the issue due to the cancellation risk. \n"
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The customer reported a billing dispute potentially leading to cancellation."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "refund_policy.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 5025,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_002_standard_billing_low_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "Customer asks why the invoice amount changed this month.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "billing_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.2999
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.2573
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2422
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Verify the invoice ID",
+          "Check for any recent subscription changes",
+          "Review the contract terms and applied discounts"
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The customer's inquiry about an invoice amount change indicates a billing dispute that requires careful review."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "refund_policy.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 2750,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_003_enterprise_outage",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1003",
+        "issue_text": "The service is unavailable for multiple users.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "technical_outage",
+        "customer_tier": "enterprise",
+        "urgency": "critical",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "technical_outage_guide.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "critical",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.2785
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2365
+          },
+          {
+            "title": "premium_customer_sla.md",
+            "snippet": "# Premium Customer SLA Premium customers require faster response times than standard customers. For high-priority operational issues, the first response should be sent within 4 business hours. If a premium customer mentions cancellation, contract risk, legal concern, or repeated dissatisfaction, the issue should be escalated to a human manager. Premium customer issues related to billing, service outage, or account access should not be handled as low priority. If the system is uncertain about the correct action, it should recommend human escalation instead of giving a risky automated recommenda",
+            "score": 0.0482
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status",
+          "Collect affected user information",
+          "Identify the start time of the issue",
+          "Escalate to the engineering on-call team"
+        ],
+        "confidence": 0.95,
+        "reasoning_summary": "Service is unavailable for multiple users indicating a critical outage."
+      },
+      "source_titles": [
+        "technical_outage_guide.md",
+        "escalation_matrix.md",
+        "premium_customer_sla.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 4759,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_004_premium_refund_low_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "Customer asks whether a refund is possible for a recent payment.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "refund_request",
+        "customer_tier": "premium",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "refund_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "refund_request",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "refund_policy.md",
+            "snippet": "# Refund Policy Refund requests should be classified based on amount, customer tier, reason, and contract terms. Small refund requests from standard customers may be handled through the normal support process. Refund requests from premium or enterprise customers should be reviewed more carefully, especially when the customer mentions dissatisfaction, renewal risk, or cancellation. The operations team should not approve a refund automatically unless the refund reason matches an existing policy. Recommended next steps include collecting invoice details, checking eligibility, reviewing contract t",
+            "score": 0.3624
+          },
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.1968
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.1851
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Collect invoice details",
+          "Check eligibility for refund",
+          "Review contract terms"
+        ],
+        "confidence": 0.85,
+        "reasoning_summary": "The issue pertains to a refund request as specified by the customer."
+      },
+      "source_titles": [
+        "refund_policy.md",
+        "billing_policy.md",
+        "refund_policy.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 4633,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_005_standard_refund_low_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "Customer requests a refund for a recent payment.",
+        "channel": "chat"
+      },
+      "expected": {
+        "issue_type": "refund_request",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "refund_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "refund_request",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "refund_policy.md",
+            "snippet": "# Refund Policy Refund requests should be classified based on amount, customer tier, reason, and contract terms. Small refund requests from standard customers may be handled through the normal support process. Refund requests from premium or enterprise customers should be reviewed more carefully, especially when the customer mentions dissatisfaction, renewal risk, or cancellation. The operations team should not approve a refund automatically unless the refund reason matches an existing policy. Recommended next steps include collecting invoice details, checking eligibility, reviewing contract t",
+            "score": 0.4807
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2013
+          },
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.1661
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Collect invoice details from the customer",
+          "Check eligibility according to refund policy",
+          "Review contract terms related to the refund"
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The issue is a refund request which requires escalation due to the lack of customer tier information."
+      },
+      "source_titles": [
+        "refund_policy.md",
+        "escalation_matrix.md",
+        "billing_policy.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3980,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 0,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_006_standard_technical_low_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "The dashboard is down for one user.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "technical_outage",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "technical_outage_guide.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.2806
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status.",
+          "Collect affected user information.",
+          "Identify the start time of the issue."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The issue involves a dashboard being down for one user, indicating a technical outage."
+      },
+      "source_titles": [
+        "technical_outage_guide.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 2914,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_007_premium_billing_legal_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "Customer says there is a billing issue and their legal team may be involved.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "premium",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "billing_policy.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "high",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.3572
+          },
+          {
+            "title": "billing_policy.md",
+            "snippet": "andled with higher priority because billing problems may create renewal or cancellation risk. The recommended first response is to acknowledge the issue, confirm that the billing details will be reviewed, and avoid admitting fault before verification. If the dispute appears valid, the case should be escalated to the billing operations team.",
+            "score": 0.2902
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2698
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Acknowledge the issue and confirm that billing details will be reviewed.",
+          "Escalate the issue to the billing operations team for further investigation."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The issue is a billing dispute with potential legal involvement, requiring escalation."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "billing_policy.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 5451,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_008_enterprise_billing_dispute",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1003",
+        "issue_text": "Customer says the invoice amount is incorrect.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "enterprise",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "billing_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.2947
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.1633
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.1537
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Verify the invoice ID and customer account status.",
+          "Check contract terms and applied discounts.",
+          "Gather more details about the incorrect invoice amount."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The issue clearly relates to billing and requires a review of the invoice details."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "refund_policy.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 2968,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 0,
+        "escalation_correct": 0,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_009_standard_cancellation_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "Customer wants to cancel the subscription next month.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "cancellation_risk",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "cancellation_risk",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.2367
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.1225
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "calated when the amount is high, the customer is premium or enterprise, or the reason is not clearly covered by policy. If the AI system has low confidence, missing customer information, or no relevant policy source, it should recommend human review.",
+            "score": 0.1082
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Confirm the subscription cancellation request for next month.",
+          "Reach out to the customer to verify their reason for cancellation."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The customer's request to cancel indicates a potential cancellation risk."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "escalation_matrix.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 2675,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 0,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_010_premium_outage_low_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "The service is down for one user.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "technical_outage",
+        "customer_tier": "premium",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "technical_outage_guide.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.3497
+          },
+          {
+            "title": "premium_customer_sla.md",
+            "snippet": "# Premium Customer SLA Premium customers require faster response times than standard customers. For high-priority operational issues, the first response should be sent within 4 business hours. If a premium customer mentions cancellation, contract risk, legal concern, or repeated dissatisfaction, the issue should be escalated to a human manager. Premium customer issues related to billing, service outage, or account access should not be handled as low priority. If the system is uncertain about the correct action, it should recommend human escalation instead of giving a risky automated recommenda",
+            "score": 0.0637
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.0636
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status to confirm if the service is down for the affected user.",
+          "Collect information about the affected user and details of the outage."
+        ],
+        "confidence": 0.85,
+        "reasoning_summary": "The issue pertains to a service outage affecting one user, thus categorized as a technical outage."
+      },
+      "source_titles": [
+        "technical_outage_guide.md",
+        "premium_customer_sla.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3975,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_011_standard_duplicate_charge",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "Customer reports a duplicate charge on the latest payment.",
+        "channel": "chat"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "billing_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.1761
+          },
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.1607
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.0911
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Verify the invoice ID",
+          "Check the customer account status",
+          "Review contract terms and applied discounts"
+        ],
+        "confidence": 0.85,
+        "reasoning_summary": "The issue pertains to a duplicate charge, which is categorized as a billing dispute and needs verification."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "technical_outage_guide.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3339,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_012_premium_contract_billing_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1004",
+        "issue_text": "Customer says the billing terms conflict with the contract.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "premium",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "billing_policy.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "high",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.4341
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.2849
+          },
+          {
+            "title": "billing_policy.md",
+            "snippet": "andled with higher priority because billing problems may create renewal or cancellation risk. The recommended first response is to acknowledge the issue, confirm that the billing details will be reviewed, and avoid admitting fault before verification. If the dispute appears valid, the case should be escalated to the billing operations team.",
+            "score": 0.2214
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Acknowledge the customer's issue and assure them that the billing details will be reviewed.",
+          "Collect invoice details and relevant contract terms for verification.",
+          "Evaluate the customer's account status and any recent subscription changes."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The issue involves a billing dispute, which is a high-priority matter."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "refund_policy.md",
+        "billing_policy.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3543,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 0.5,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_013_enterprise_tax_invoice_issue",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1003",
+        "issue_text": "Customer says the invoice tax calculation is wrong.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "enterprise",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "billing_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.3158
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.1292
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.1216
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Verify the invoice ID and the tax calculation details.",
+          "Check the customer account status and contract terms.",
+          "Collect additional details from the customer regarding the invoice."
+        ],
+        "confidence": 0.85,
+        "reasoning_summary": "The issue involves a billing dispute about tax calculation."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "refund_policy.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 2776,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 0,
+        "escalation_correct": 0,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_014_standard_missing_discount",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "Customer asks why a discount is missing from the invoice.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "billing_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.291
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "calated when the amount is high, the customer is premium or enterprise, or the reason is not clearly covered by policy. If the AI system has low confidence, missing customer information, or no relevant policy source, it should recommend human review.",
+            "score": 0.2565
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.1788
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Verify the invoice ID and customer account status.",
+          "Check for any applied discounts in the contract and recent subscription changes.",
+          "Escalate the issue for further review due to the missing discount."
+        ],
+        "confidence": 0.85,
+        "reasoning_summary": "The customer has a billing dispute about a missing discount."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "escalation_matrix.md",
+        "refund_policy.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 5138,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 0,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_015_premium_unexpected_renewal_fee",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "Customer reports an unexpected renewal fee and is unhappy.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "billing_dispute",
+        "customer_tier": "premium",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "billing_policy.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "billing_dispute",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.2471
+          },
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.1439
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.0816
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Verify the customer's invoice ID and account status.",
+          "Review the contract terms and any applied discounts.",
+          "Assess if the unexpected renewal fee aligns with the customer's expectations."
+        ],
+        "confidence": 0.85,
+        "reasoning_summary": "The issue pertains to an unexpected renewal fee, qualifying it as a billing dispute."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "technical_outage_guide.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3223,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 0,
+        "escalation_correct": 0,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_016_enterprise_full_outage",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1003",
+        "issue_text": "The platform is down for all users in the account.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "technical_outage",
+        "customer_tier": "enterprise",
+        "urgency": "critical",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "technical_outage_guide.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "critical",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.1585
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.0917
+          },
+          {
+            "title": "premium_customer_sla.md",
+            "snippet": "# Premium Customer SLA Premium customers require faster response times than standard customers. For high-priority operational issues, the first response should be sent within 4 business hours. If a premium customer mentions cancellation, contract risk, legal concern, or repeated dissatisfaction, the issue should be escalated to a human manager. Premium customer issues related to billing, service outage, or account access should not be handled as low priority. If the system is uncertain about the correct action, it should recommend human escalation instead of giving a risky automated recommenda",
+            "score": 0.0703
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status to identify the nature of the outage.",
+          "Collect affected user information from the account.",
+          "Identify the start time of the outage.",
+          "Escalate to the engineering on-call team immediately."
+        ],
+        "confidence": 0.95,
+        "reasoning_summary": "The issue is a technical outage affecting all users, classified as critical."
+      },
+      "source_titles": [
+        "technical_outage_guide.md",
+        "escalation_matrix.md",
+        "premium_customer_sla.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 4161,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_017_standard_dashboard_unavailable",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "The dashboard is unavailable for one user after login.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "technical_outage",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "technical_outage_guide.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.2911
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.0789
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status to identify if the issue is affecting others.",
+          "Collect information on the affected user's account for further investigation."
+        ],
+        "confidence": 0.8,
+        "reasoning_summary": "The dashboard is unavailable for one user, indicating a technical issue that requires attention."
+      },
+      "source_titles": [
+        "technical_outage_guide.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3049,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_018_premium_service_unavailable",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "The service is unavailable for one user.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "technical_outage",
+        "customer_tier": "premium",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "technical_outage_guide.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.3561
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.1212
+          },
+          {
+            "title": "premium_customer_sla.md",
+            "snippet": "# Premium Customer SLA Premium customers require faster response times than standard customers. For high-priority operational issues, the first response should be sent within 4 business hours. If a premium customer mentions cancellation, contract risk, legal concern, or repeated dissatisfaction, the issue should be escalated to a human manager. Premium customer issues related to billing, service outage, or account access should not be handled as low priority. If the system is uncertain about the correct action, it should recommend human escalation instead of giving a risky automated recommenda",
+            "score": 0.0527
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status to identify if the outage is broader than one user.",
+          "Collect information about the affected user to understand the issue better."
+        ],
+        "confidence": 0.85,
+        "reasoning_summary": "The service being unavailable indicates a technical outage."
+      },
+      "source_titles": [
+        "technical_outage_guide.md",
+        "escalation_matrix.md",
+        "premium_customer_sla.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3923,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_019_enterprise_outage_multiple_users",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1003",
+        "issue_text": "The service is down for multiple users.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "technical_outage",
+        "customer_tier": "enterprise",
+        "urgency": "critical",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "technical_outage_guide.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "critical",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.2532
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2027
+          },
+          {
+            "title": "premium_customer_sla.md",
+            "snippet": "# Premium Customer SLA Premium customers require faster response times than standard customers. For high-priority operational issues, the first response should be sent within 4 business hours. If a premium customer mentions cancellation, contract risk, legal concern, or repeated dissatisfaction, the issue should be escalated to a human manager. Premium customer issues related to billing, service outage, or account access should not be handled as low priority. If the system is uncertain about the correct action, it should recommend human escalation instead of giving a risky automated recommenda",
+            "score": 0.0562
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status to identify the scope of the outage.",
+          "Collect affected user information to assess impact.",
+          "Identify the start time of the issue for troubleshooting.",
+          "Escalate to the engineering on-call team."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "Multiple users are affected, indicating a critical outage."
+      },
+      "source_titles": [
+        "technical_outage_guide.md",
+        "escalation_matrix.md",
+        "premium_customer_sla.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 4168,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_020_standard_partial_outage",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "The reporting page is down for one user.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "technical_outage",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "technical_outage_guide.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.2806
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status for the reporting page.",
+          "Collect information about the affected user.",
+          "Identify the start time of the issue."
+        ],
+        "confidence": 0.8,
+        "reasoning_summary": "The issue reported indicates a technical outage affecting one user, which is significant enough to address promptly."
+      },
+      "source_titles": [
+        "technical_outage_guide.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 2963,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_021_premium_refund_contract_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "Customer requests a refund and says the contract terms are unclear.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "refund_request",
+        "customer_tier": "premium",
+        "urgency": "medium",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "refund_policy.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "refund_request",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "refund_policy.md",
+            "snippet": "# Refund Policy Refund requests should be classified based on amount, customer tier, reason, and contract terms. Small refund requests from standard customers may be handled through the normal support process. Refund requests from premium or enterprise customers should be reviewed more carefully, especially when the customer mentions dissatisfaction, renewal risk, or cancellation. The operations team should not approve a refund automatically unless the refund reason matches an existing policy. Recommended next steps include collecting invoice details, checking eligibility, reviewing contract t",
+            "score": 0.5934
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.3417
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2377
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Collect invoice details from the customer.",
+          "Check eligibility for refund based on contract terms.",
+          "Review the unclear contract terms with the customer."
+        ],
+        "confidence": 0.8,
+        "reasoning_summary": "The customer requests a refund, indicating possible dissatisfaction. Escalation is necessary due to the unclear contract terms."
+      },
+      "source_titles": [
+        "refund_policy.md",
+        "refund_policy.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3808,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_022_enterprise_refund_legal_risk",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1003",
+        "issue_text": "Customer requests a refund and says legal review may be needed.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "refund_request",
+        "customer_tier": "enterprise",
+        "urgency": "medium",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "refund_policy.md",
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "refund_request",
+        "urgency": "high",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "refund_policy.md",
+            "snippet": "# Refund Policy Refund requests should be classified based on amount, customer tier, reason, and contract terms. Small refund requests from standard customers may be handled through the normal support process. Refund requests from premium or enterprise customers should be reviewed more carefully, especially when the customer mentions dissatisfaction, renewal risk, or cancellation. The operations team should not approve a refund automatically unless the refund reason matches an existing policy. Recommended next steps include collecting invoice details, checking eligibility, reviewing contract t",
+            "score": 0.4236
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.235
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "calated when the amount is high, the customer is premium or enterprise, or the reason is not clearly covered by policy. If the AI system has low confidence, missing customer information, or no relevant policy source, it should recommend human review.",
+            "score": 0.2076
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Collect invoice details from the customer.",
+          "Check refund eligibility based on company policy.",
+          "Prepare the case for legal review, if necessary."
+        ],
+        "confidence": 0.8,
+        "reasoning_summary": "The request for a refund and mention of legal review suggest high urgency."
+      },
+      "source_titles": [
+        "refund_policy.md",
+        "escalation_matrix.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 8323,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 0,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_023_standard_refund_question",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "Customer asks about refund eligibility for a recent payment.",
+        "channel": "chat"
+      },
+      "expected": {
+        "issue_type": "refund_request",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "refund_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "refund_request",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "refund_policy.md",
+            "snippet": "# Refund Policy Refund requests should be classified based on amount, customer tier, reason, and contract terms. Small refund requests from standard customers may be handled through the normal support process. Refund requests from premium or enterprise customers should be reviewed more carefully, especially when the customer mentions dissatisfaction, renewal risk, or cancellation. The operations team should not approve a refund automatically unless the refund reason matches an existing policy. Recommended next steps include collecting invoice details, checking eligibility, reviewing contract t",
+            "score": 0.3642
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.299
+          },
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.1661
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Collect invoice details from the customer.",
+          "Check eligibility based on refund policy."
+        ],
+        "confidence": 0.8,
+        "reasoning_summary": "The issue relates to refund eligibility, indicating a refund request type."
+      },
+      "source_titles": [
+        "refund_policy.md",
+        "refund_policy.md",
+        "billing_policy.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3346,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_024_premium_refund_amount",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1004",
+        "issue_text": "Customer asks if a refund is possible for an unused month.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "refund_request",
+        "customer_tier": "premium",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [
+          "refund_policy.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "refund_request",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "refund_policy.md",
+            "snippet": "# Refund Policy Refund requests should be classified based on amount, customer tier, reason, and contract terms. Small refund requests from standard customers may be handled through the normal support process. Refund requests from premium or enterprise customers should be reviewed more carefully, especially when the customer mentions dissatisfaction, renewal risk, or cancellation. The operations team should not approve a refund automatically unless the refund reason matches an existing policy. Recommended next steps include collecting invoice details, checking eligibility, reviewing contract t",
+            "score": 0.5454
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.2785
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2424
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Collect invoice details",
+          "Check eligibility for the refund",
+          "Review customer contract terms"
+        ],
+        "confidence": 0.85,
+        "reasoning_summary": "The customer inquired about a refund for an unused month, which fits the refund request type."
+      },
+      "source_titles": [
+        "refund_policy.md",
+        "refund_policy.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3598,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_025_standard_login_locked",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1002",
+        "issue_text": "Customer cannot login because the account is locked.",
+        "channel": "chat"
+      },
+      "expected": {
+        "issue_type": "account_access",
+        "customer_tier": "standard",
+        "urgency": "medium",
+        "escalation_required": false,
+        "create_ticket_called": false,
+        "required_sources": [],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy"
+        ]
+      },
+      "output": {
+        "issue_type": "account_access",
+        "urgency": "high",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.2283
+          },
+          {
+            "title": "premium_customer_sla.md",
+            "snippet": "# Premium Customer SLA Premium customers require faster response times than standard customers. For high-priority operational issues, the first response should be sent within 4 business hours. If a premium customer mentions cancellation, contract risk, legal concern, or repeated dissatisfaction, the issue should be escalated to a human manager. Premium customer issues related to billing, service outage, or account access should not be handled as low priority. If the system is uncertain about the correct action, it should recommend human escalation instead of giving a risky automated recommenda",
+            "score": 0.2045
+          },
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.1998
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Verify if the account is indeed locked and gather details for escalation.",
+          "Escalate the issue to a human manager for resolution."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The issue involves account access, which is critical; escalation is needed."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "premium_customer_sla.md",
+        "technical_outage_guide.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3367,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 0,
+        "escalation_correct": 0,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 1,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.2,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_026_premium_password_access",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "Customer cannot access the account after a password reset.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "account_access",
+        "customer_tier": "premium",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "account_access",
+        "urgency": "high",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "premium_customer_sla.md",
+            "snippet": "# Premium Customer SLA Premium customers require faster response times than standard customers. For high-priority operational issues, the first response should be sent within 4 business hours. If a premium customer mentions cancellation, contract risk, legal concern, or repeated dissatisfaction, the issue should be escalated to a human manager. Premium customer issues related to billing, service outage, or account access should not be handled as low priority. If the system is uncertain about the correct action, it should recommend human escalation instead of giving a risky automated recommenda",
+            "score": 0.2432
+          },
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.1517
+          },
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.1327
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Escalate the issue to a human operations manager for immediate assistance.",
+          "Verify the account status and any recent password reset actions."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The customer cannot access their account after a password reset, indicating a serious access issue that requires urgent resolution."
+      },
+      "source_titles": [
+        "premium_customer_sla.md",
+        "billing_policy.md",
+        "technical_outage_guide.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 5805,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_027_enterprise_access_locked",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1003",
+        "issue_text": "Customer says several users are locked out and cannot access the account.",
+        "channel": "support_ticket"
+      },
+      "expected": {
+        "issue_type": "account_access",
+        "customer_tier": "enterprise",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "technical_outage",
+        "urgency": "high",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "premium_customer_sla.md",
+            "snippet": "# Premium Customer SLA Premium customers require faster response times than standard customers. For high-priority operational issues, the first response should be sent within 4 business hours. If a premium customer mentions cancellation, contract risk, legal concern, or repeated dissatisfaction, the issue should be escalated to a human manager. Premium customer issues related to billing, service outage, or account access should not be handled as low priority. If the system is uncertain about the correct action, it should recommend human escalation instead of giving a risky automated recommenda",
+            "score": 0.2053
+          },
+          {
+            "title": "technical_outage_guide.md",
+            "snippet": "# Technical Outage Guide A technical outage should be treated as urgent when the customer reports that the service is unavailable, business-critical workflows are blocked, or multiple users are affected. Enterprise customer outages should be treated as critical by default. The operations team should check whether the issue is isolated to one user, one customer account, one region, or the entire service. Recommended next steps include checking system status, collecting affected user information, identifying the start time of the issue, and escalating to the engineering on-call team when busines",
+            "score": 0.176
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.1513
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Check system status.",
+          "Collect affected user information.",
+          "Identify the start time of the issue.",
+          "Escalate to the engineering on-call team if necessary."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The issue involves multiple users locked out, indicating a technical outage that requires urgent attention."
+      },
+      "source_titles": [
+        "premium_customer_sla.md",
+        "technical_outage_guide.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 4243,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 0,
+        "customer_tier_correct": 0,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_028_premium_cancel_subscription",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1001",
+        "issue_text": "Customer wants to cancel the subscription before renewal.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "cancellation_risk",
+        "customer_tier": "premium",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "cancellation_risk",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": false,
+        "retrieved_sources": [
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.3084
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.1018
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "# Refund Policy Refund requests should be classified based on amount, customer tier, reason, and contract terms. Small refund requests from standard customers may be handled through the normal support process. Refund requests from premium or enterprise customers should be reviewed more carefully, especially when the customer mentions dissatisfaction, renewal risk, or cancellation. The operations team should not approve a refund automatically unless the refund reason matches an existing policy. Recommended next steps include collecting invoice details, checking eligibility, reviewing contract t",
+            "score": 0.0982
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Acknowledge the customer's request for cancellation.",
+          "Verify the subscription renewal terms, if possible."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The issue involves a cancellation request which is categorized as a cancellation risk."
+      },
+      "source_titles": [
+        "billing_policy.md",
+        "escalation_matrix.md",
+        "refund_policy.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3895,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 0,
+        "escalation_correct": 0,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_029_enterprise_terminate_contract",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": "CUST-1003",
+        "issue_text": "Customer says they may terminate contract next quarter.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "cancellation_risk",
+        "customer_tier": "enterprise",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [
+          "escalation_matrix.md"
+        ],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "cancellation_risk",
+        "urgency": "medium",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2432
+          },
+          {
+            "title": "refund_policy.md",
+            "snippet": "ecommended next steps include collecting invoice details, checking eligibility, reviewing contract terms, and escalating when the refund amount is high or the customer is high-value.",
+            "score": 0.2406
+          },
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.229
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Discuss the customer's concerns and reasons for potential termination.",
+          "Review the customer's contract terms and previous interactions for context.",
+          "Consider reaching out proactively to address any issues that may prevent renewal."
+        ],
+        "confidence": 0.9,
+        "reasoning_summary": "The customer indicated they may terminate their contract, which suggests a cancellation risk."
+      },
+      "source_titles": [
+        "escalation_matrix.md",
+        "refund_policy.md",
+        "billing_policy.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 3517,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 0,
+        "urgency_correct": 0,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    },
+    {
+      "case_id": "case_030_unknown_general_question",
+      "mode": "simple_rag",
+      "input": {
+        "customer_id": null,
+        "issue_text": "Customer says something is confusing and needs help soon.",
+        "channel": "email"
+      },
+      "expected": {
+        "issue_type": "unknown",
+        "customer_tier": "unknown",
+        "urgency": "high",
+        "escalation_required": true,
+        "create_ticket_called": true,
+        "required_sources": [],
+        "required_tools": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ],
+        "expected_tool_chain": [
+          "search_internal_docs",
+          "get_customer_profile",
+          "check_sla_policy",
+          "create_ticket_draft"
+        ]
+      },
+      "output": {
+        "issue_type": "unknown",
+        "urgency": "high",
+        "customer_tier": "unknown",
+        "escalation_required": true,
+        "retrieved_sources": [
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "# Escalation Matrix Escalation is required when the issue has high business impact, legal risk, cancellation risk, enterprise customer impact, or unresolved repeated complaints. Billing disputes should be escalated when the customer is premium or enterprise and the issue involves cancellation risk, contract risk, or large invoice amounts. Technical outages should be escalated when the customer is enterprise, multiple users are affected, or the service is unavailable. Refund requests should be escalated when the amount is high, the customer is premium or enterprise, or the reason is not clearly",
+            "score": 0.2795
+          },
+          {
+            "title": "billing_policy.md",
+            "snippet": "# Billing Policy Billing disputes should be reviewed carefully before making any promise to the customer. Common billing issues include incorrect invoice amount, duplicate charges, missing discounts, unexpected renewal fees, and tax calculation problems. For billing disputes, the operations team should first verify the invoice ID, customer account status, contract terms, applied discounts, and recent subscription changes. If the customer is a premium or enterprise customer, the issue should be handled with higher priority because billing problems may create renewal or cancellation risk. The re",
+            "score": 0.2633
+          },
+          {
+            "title": "escalation_matrix.md",
+            "snippet": "calated when the amount is high, the customer is premium or enterprise, or the reason is not clearly covered by policy. If the AI system has low confidence, missing customer information, or no relevant policy source, it should recommend human review.",
+            "score": 0.2468
+          }
+        ],
+        "tools_called": [],
+        "recommended_next_steps": [
+          "Review the customer's issue in detail.",
+          "Escalate to a human for further assistance."
+        ],
+        "confidence": 0.8,
+        "reasoning_summary": "The customer is confused and needs help soon, indicating urgency."
+      },
+      "source_titles": [
+        "escalation_matrix.md",
+        "billing_policy.md",
+        "escalation_matrix.md"
+      ],
+      "tool_names": [],
+      "execution_path": [
+        "retrieve_docs",
+        "generate_simple_rag_response"
+      ],
+      "latency_ms": 2586,
+      "error": null,
+      "metrics": {
+        "schema_valid": 1,
+        "issue_type_correct": 1,
+        "customer_tier_correct": 1,
+        "urgency_correct": 1,
+        "escalation_correct": 1,
+        "retrieval_hit_rate": 1.0,
+        "required_tool_call_rate": 0.0,
+        "conditional_branch_correct": 0,
+        "tool_dependency_valid": 0,
+        "execution_path_contains_rate": 0.16666666666666666,
+        "execution_path_excludes_rate": 1.0
+      }
+    }
+  ]
+}
