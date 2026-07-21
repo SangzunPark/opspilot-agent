@@ -299,3 +299,34 @@ These results support the main design point of the project: the difference betwe
 
 Latency was measured in mock mode and does not represent real LLM API latency.
 
+### Real OpenAI Evaluation on the Same 30-Case Dataset
+
+After completing the 30-case mock-mode structural evaluation, I reran the same 30-case dataset using the real OpenAI API for `simple_rag` and `agentic_llm`.
+
+The goal was to complement the deterministic mock-mode evaluation with real LLM behavior, including structured output reliability, recommendation quality, fallback behavior, and real API latency.
+
+| Metric | simple_rag OpenAI | agentic_llm OpenAI |
+|---|---:|---:|
+| Schema validity | 100.0% | 100.0% |
+| Issue type accuracy | 96.7% | 96.7% |
+| Customer tier accuracy | 3.3% | 100.0% |
+| Urgency accuracy | 76.7% | 96.7% |
+| Escalation accuracy | 73.3% | 100.0% |
+| Retrieval hit rate | 98.3% | 98.3% |
+| Required tool call rate | 0.0% | 100.0% |
+| Conditional branch accuracy | 43.3% | 100.0% |
+| Tool dependency validity | 0.0% | 100.0% |
+| Execution path contains rate | 18.1% | 100.0% |
+| Execution path excludes rate | 100.0% | 100.0% |
+| Average tool calls | 0.00 | 3.57 |
+| Average execution path length | 2.00 | 6.57 |
+| Average latency ms | 3930 | 3247 |
+| Error rate | 0.0% | 0.0% |
+
+The OpenAI evaluation showed that both modes returned valid structured outputs with no runtime errors. The `simple_rag` mode improved in urgency and escalation prediction compared with the mock-mode evaluation, but it still lacked verified customer context, tool calls, dependency chains, and conditional workflow execution.
+
+The `agentic_llm` workflow preserved its structural advantages under real OpenAI calls, achieving 100% customer tier accuracy, 100% escalation accuracy, 100% required tool call rate, 100% conditional branch accuracy, and 100% tool dependency validity.
+
+This supports the main design point: real LLM reasoning can improve a simple RAG pipeline, but an agentic workflow is still needed when the task requires verified tool outputs, stateful decision-making, and conditional follow-up actions.
+
+In this run, the agentic workflow did not introduce a latency penalty despite using more local tool calls. Most latency came from the OpenAI API call rather than local workflow steps.
