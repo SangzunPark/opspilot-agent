@@ -14,6 +14,7 @@ The system receives an operational issue, classifies the issue type, retrieves r
 - **Week 5**: LLM integration and multi-mode comparison — three workflow modes available via POST /triage?mode=.
 - **Week 6**: Observability and deployment setup — run-level JSONL logging with `run_id`, mode, retrieved sources, tool calls, LLM/fallback flags, latency tracking, `GET /runs/{run_id}` trace lookup endpoint, and Docker/Docker Compose support.
 - **Week 6.5**: Conditional routing — updated the `agentic_llm` workflow so ticket draft creation is triggered only when `escalation_required=true`, demonstrating state-dependent execution paths.
+- **Week 7**: Evaluation framework — created a JSONL evaluation dataset and scripts to compare simple_rag, baseline, and agentic_llm across output accuracy, retrieval hit rate, tool usage, conditional branch accuracy, tool dependency validity, execution path length, and latency.
 
 ## Tech Stack
 
@@ -251,3 +252,16 @@ assess_risk
 │   └── create_ticket → generate_llm_response
 └── escalation_required = false
     └── generate_llm_response
+```
+
+### Preliminary Evaluation Results
+
+I first ran a 10-case synthetic evaluation to validate the comparison framework.(Mock Mode)
+
+The `simple_rag` mode achieved a 100% retrieval hit rate, showing that it could retrieve relevant policy documents. However, it had no tool calls, no valid tool dependency chain, and only 50% conditional branch accuracy.
+
+The `agentic_llm` mode achieved 100% accuracy across customer tier, urgency, escalation decision, required tool calls, tool dependency validity, and conditional branch accuracy in this preliminary evaluation.
+
+This supports the main design point: the difference is not simply data access or retrieval quality. The agentic workflow maintains intermediate state, passes tool outputs into later steps, and changes the execution path based on previous results.
+
+Latency was measured in mock mode and does not represent real LLM API latency.

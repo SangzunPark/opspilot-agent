@@ -36,7 +36,8 @@ def build_agentic_llm_workflow():
     workflow.add_edge("check_sla", "assess_risk")
     # 조건부 연결, 갈림길 만들기 assess_risk 노드가 끝나면 route_After_risk_Assessment 호출
     # 함수의 반환 값(create_ticket or generate..)을 따라 해당 노드로 이동
-    # 왼쪽이 함수의 출력 값, 오른쪽이 노드, 아래 코드는 이 둘이 동일 한 경우  
+    # 왼쪽이 함수의 출력 값, 오른쪽이 노드, 아래 코드는 이 둘이 동일 한 경우
+    # 기존 LangChain 과 차별화되는 LangGraph의 특징  
     workflow.add_conditional_edges(
         "assess_risk",
         route_after_risk_assessment,
@@ -52,6 +53,7 @@ def build_agentic_llm_workflow():
     return workflow.compile()
 
 # 갈림길 판단 함수
+# 실제로 방향을 결정하는 부분
 def route_after_risk_assessment(state: OpsAgentState) -> NextStepAfterRisk:
     if state.escalation_required:
         return "create_ticket"
