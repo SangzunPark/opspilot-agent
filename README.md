@@ -14,7 +14,7 @@ The system receives an operational issue, classifies the issue type, retrieves r
 - **Week 5**: LLM integration and multi-mode comparison — three workflow modes available via POST /triage?mode=.
 - **Week 6**: Observability and deployment setup — run-level JSONL logging with `run_id`, mode, retrieved sources, tool calls, LLM/fallback flags, latency tracking, `GET /runs/{run_id}` trace lookup endpoint, and Docker/Docker Compose support.
 - **Week 6.5**: Conditional routing — updated the `agentic_llm` workflow so ticket draft creation is triggered only when `escalation_required=true`, demonstrating state-dependent execution paths.
-- **Week 7**: Evaluation framework — created a JSONL evaluation dataset and scripts to compare simple_rag, baseline, and agentic_llm across output accuracy, retrieval hit rate, tool usage, conditional branch accuracy, tool dependency validity, execution path length, and latency.
+- **Week 7**: Evaluation framework — built a structured evaluation pipeline and expanded from a 10-case preliminary test to a 30-case evaluation dataset. Week 7B used mock mode to evaluate deterministic workflow structure across `simple_rag`, `baseline`, and `agentic_llm`. Week 7C reran the same 30-case dataset with the real OpenAI provider for `simple_rag` and `agentic_llm`, confirming valid structured outputs, 0% runtime errors, real API latency, and preserved agentic workflow advantages in tool usage, dependency chains, and conditional routing.
 
 ## Tech Stack
 
