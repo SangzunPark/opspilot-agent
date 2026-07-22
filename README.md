@@ -411,7 +411,7 @@ logs/
 - Extend dependency validation to full tool input/output chains.
 - Expand the evaluation dataset with more realistic historical support tickets.
 - Add a lightweight frontend for reviewing triage results and traces.
-
+- Add an LLM-based issue interpretation node before deterministic risk assessment to extract structured signals from messy customer text, such as secondary issue types, cancellation intent, legal threat, urgency cues, ambiguity, and missing information. These LLM-derived signals would be treated as inputs to deterministic verification and routing rules rather than as final business decisions.
 ---
 
 ## Current Status
