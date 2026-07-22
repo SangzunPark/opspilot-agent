@@ -4,18 +4,6 @@ OpsPilot is a production-style agentic AI assistant for internal operations issu
 
 The system receives an operational issue, classifies the issue type, retrieves relevant internal policies, calls tools such as customer profile lookup and SLA checking, assesses urgency and escalation risk, and returns a structured next-step recommendation.
 
-## Current Status
-
-- **Week 0**: Project setup and FastAPI health check.
-- **Week 1**: Domain design, issue type definitions, and Pydantic schemas.
-- **Week 2**: Business tool layer — customer profile lookup, SLA policy check, document search, and ticket draft generation.
-- **Week 3**: RAG retrieval layer — document chunking and TF-IDF based search.
-- **Week 4**: LangGraph workflow MVP — end-to-end triage pipeline with POST /triage endpoint.
-- **Week 5**: LLM integration and multi-mode comparison — three workflow modes available via POST /triage?mode=.
-- **Week 6**: Observability and deployment setup — run-level JSONL logging with `run_id`, mode, retrieved sources, tool calls, LLM/fallback flags, latency tracking, `GET /runs/{run_id}` trace lookup endpoint, and Docker/Docker Compose support.
-- **Week 6.5**: Conditional routing — updated the `agentic_llm` workflow so ticket draft creation is triggered only when `escalation_required=true`, demonstrating state-dependent execution paths.
-- **Week 7**: Evaluation framework — created a JSONL evaluation dataset and scripts to compare simple_rag, baseline, and agentic_llm across output accuracy, retrieval hit rate, tool usage, conditional branch accuracy, tool dependency validity, execution path length, and latency.
-
 ## Tech Stack
 
 - Python
@@ -26,29 +14,27 @@ The system receives an operational issue, classifies the issue type, retrieves r
 - Docker
 - pytest
 
-## Planned Workflow
-
-User issue input  
-→ issue classification  
-→ internal document retrieval  
-→ customer profile lookup  
-→ SLA policy check  
-→ risk and escalation assessment  
-→ structured recommendation  
-
-## Local Development
-
-````bash
-uv run uvicorn app.main:app --reload
-
 ## Problem
-````
 
 Internal operations teams often receive messy customer or business issue reports through email, support tools, or chat messages.
 
 These reports may include billing disputes, refund requests, service outages, account access problems, or cancellation risks. A human operator usually needs to read the message, identify the issue type, check customer information, review internal policies, decide urgency, and determine whether escalation is required.
 
 OpsPilot is designed to support this workflow by turning an unstructured operations issue into a structured triage result.
+
+## Why this is more than basic RAG
+
+The main difference is not data access — any pipeline can add a database lookup. The difference is **execution structure**.
+
+A standard RAG+LLM pipeline retrieves relevant context and generates a response. This works well for question answering, but it cannot naturally represent tool dependency chains, intermediate state, and conditional execution.
+
+In this project, the agentic workflow uses customer-lookup results, SLA checks, and risk assessment to decide whether a ticket draft should be created. One step's output becomes part of the workflow state and controls later actions — for example, a ticket is created only when risk assessment marks the case as requiring escalation.
+
+## Business Context
+
+OpsPilot simulates a B2B SaaS company serving standard, premium, and enterprise customers.
+
+Customer tier matters because premium and enterprise customers may have stricter SLA requirements and higher escalation priority.
 
 ## Initial Scope
 
@@ -62,11 +48,40 @@ The first version focuses on five issue types:
 
 The system will classify the issue, retrieve relevant internal policy documents, call business tools, assess urgency, and return a structured recommendation.
 
-## Business Context
+---
 
-OpsPilot simulates a B2B SaaS company serving standard, premium, and enterprise customers.
+## System Architecture
 
-Customer tier matters because premium and enterprise customers may have stricter SLA requirements and higher escalation priority.
+```text
+User request
+  ↓
+FastAPI  /triage?mode=...
+  ↓
+Workflow router
+  ├── simple_rag
+  │     └── retrieve_docs → generate_simple_rag_response
+  │
+  ├── baseline
+  │     └── deterministic LangGraph workflow (all steps, unconditional)
+  │
+  └── agentic_llm
+        └── classify_issue
+            → retrieve_docs
+            → get_customer_profile
+            → check_sla
+            → assess_risk
+               ├── escalation_required = true
+               │     → create_ticket → generate_llm_response
+               └── escalation_required = false
+                     → generate_llm_response
+  ↓
+Structured TriageResponse
+  ↓
+Run log  /  evaluation results
+```
+
+---
+
 
 ## Business Tools
 
@@ -98,24 +113,6 @@ Current retrieval flow:
 3. Build a TF-IDF index
 4. Search relevant chunks for an issue query
 5. Return top-k document snippets to the agent workflow
-
-## Agent Workflow MVP
-
-The Week 4 MVP connects the existing schemas, tools, and retrieval layer into a LangGraph workflow.
-
-Current workflow:
-
-1. Classify the issue type
-2. Retrieve relevant internal policy documents
-3. Look up the customer profile
-4. Check SLA policy
-5. Assess risk and escalation requirement
-6. Create a ticket draft
-7. Generate a structured triage response
-
-The current implementation is deterministic and does not use an LLM yet. This makes the workflow easier to test and debug before replacing selected nodes with LLM-based reasoning in later versions.
-
-The workflow is implemented as a LangGraph `StateGraph`, where each node receives and updates a shared `OpsAgentState`.
 
 ## Workflow Modes
 
@@ -153,14 +150,25 @@ Key difference from `simple_rag`:
 
 | | simple_rag | agentic_llm |
 |---|---|---|
-| customer_tier | always unknown | verified via DB tool |
+| customer_tier | always unknown | verified via lookup tool |
 | urgency | LLM estimate | SLA rule applied |
 | escalation | may be incorrect | deterministic rule |
 | tools_called | [] | 4 tools |
-| confidence | ~0.85 | ~0.95 |
 
-Week 7 evaluation compares `simple_rag` vs `agentic_llm` on the same dataset
+The evaluation compares `simple_rag` vs `agentic_llm` on the same dataset
 to measure the real-world impact of tool-augmented agentic design.
+
+## Conditional Execution
+
+The `agentic_llm` mode uses conditional routing after risk assessment. This is what distinguishes it from a linear pipeline: the execution path depends on intermediate results.
+
+```text
+assess_risk
+├── escalation_required = true  → create_ticket → generate_llm_response
+└── escalation_required = false → generate_llm_response
+```
+
+A premium customer with cancellation risk triggers ticket creation; a standard customer with a low-risk billing question skips it. The same issue type can take a different execution path depending on customer context and risk signals.
 
 ## Observability and Run Logging
 
@@ -210,49 +218,9 @@ This logging layer is intentionally simple and file-based for the MVP.
 It can later be replaced with PostgreSQL, OpenTelemetry, or LangSmith
 without changing the workflow code.
 
----
+## Evaluation
 
-## Docker
-
-Build and run the API with Docker Compose:
-
-```bash
-docker compose build
-docker compose up
-```
-
-**Health check:**
-
-```bash
-curl http://localhost:8000/health
-```
-
-**Run triage:**
-
-```bash
-curl -X POST "http://localhost:8000/triage?mode=agentic_llm" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "customer_id": "CUST-1001",
-    "issue_text": "Customer says the invoice amount is wrong and may cancel.",
-    "channel": "email"
-  }'
-```
-
-
-## Conditional Execution in the Agentic Workflow
-
-The `agentic_llm` mode uses conditional routing after risk assessment.
-
-After the workflow checks customer tier, SLA policy, and risk signals, it decides whether a ticket draft should be created:
-
-```text
-assess_risk
-├── escalation_required = true
-│   └── create_ticket → generate_llm_response
-└── escalation_required = false
-    └── generate_llm_response
-```
+The project includes an evaluation harness that scores all three modes on the same dataset and compares them across accuracy **and** structural metrics (tool dependency chains, conditional branching, execution paths). The evaluation was built up in three stages.
 
 ### Preliminary Evaluation Results
 
@@ -270,7 +238,7 @@ Latency was measured in mock mode and does not represent real LLM API latency.
 
 After validating the evaluation pipeline with the initial 10-case preliminary evaluation, I expanded the dataset to 30 synthetic operations triage cases. The expanded dataset covers billing disputes, technical outages, refund requests, account access issues, cancellation risk, and ambiguous requests across standard, premium, enterprise, and unknown customer contexts.
 
-The Week 7B evaluation was run in mock mode to make the comparison deterministic, reproducible, and focused on workflow structure rather than LLM text variability.
+The evaluation was run in mock mode to make the comparison deterministic, reproducible, and focused on workflow structure rather than LLM text variability.
 
 | Metric | simple_rag | baseline | agentic_llm |
 |---|---:|---:|---:|
@@ -323,10 +291,138 @@ The goal was to complement the deterministic mock-mode evaluation with real LLM 
 | Average latency ms | 3930 | 3247 |
 | Error rate | 0.0% | 0.0% |
 
-The OpenAI evaluation showed that both modes returned valid structured outputs with no runtime errors. The `simple_rag` mode improved in urgency and escalation prediction compared with the mock-mode evaluation, but it still lacked verified customer context, tool calls, dependency chains, and conditional workflow execution.
+**What the numbers show:**
 
-The `agentic_llm` workflow preserved its structural advantages under real OpenAI calls, achieving 100% customer tier accuracy, 100% escalation accuracy, 100% required tool call rate, 100% conditional branch accuracy, and 100% tool dependency validity.
+- **Execution structure differs, not just data access.** `simple_rag` scores 0% on required tool calls and tool-dependency validity — it retrieves documents but represents no tool chain. `agentic_llm` scores 100% on both.
 
-This supports the main design point: real LLM reasoning can improve a simple RAG pipeline, but an agentic workflow is still needed when the task requires verified tool outputs, stateful decision-making, and conditional follow-up actions.
+- **The agentic workflow is stable across providers.** Its structural metrics (customer tier, escalation, conditional branch) are identical under mock and real OpenAI. This is by design: the LLM only generates recommendation text, while tier, SLA, escalation, and routing are handled by deterministic code — so real LLM variability does not disturb the parts of the workflow that control execution.
 
-In this run, the agentic workflow did not introduce a latency penalty despite using more local tool calls. Most latency came from the OpenAI API call rather than local workflow steps.
+- **`simple_rag`'s higher judgment scores are guesses, not capability.** Under OpenAI it improves on urgency and escalation because a real LLM infers plausibly from the issue text. But customer-tier accuracy stays at 3.3% because tier cannot be guessed from text — it requires a lookup `simple_rag` never performs. (The one tier "hit" is the case whose correct answer is `unknown`.)
+
+- **Real API latency is the main practical cost.** Mock latency is negligible; real OpenAI latency runs to several seconds per case and varies with network conditions. Most of it comes from the OpenAI call rather than local workflow steps — the extra tool calls in `agentic_llm` did not add a latency penalty.
+
+Overall: real LLM reasoning can improve a retrieve-and-generate baseline, but an agentic workflow is still needed when the task requires verified tool outputs, stateful decision-making, and conditional follow-up actions.
+
+---
+
+## How to Run
+
+```bash
+uv sync                                              # install dependencies
+PYTHONPATH=. uv run pytest                           # run tests
+PYTHONPATH=. uv run uvicorn app.main:app --reload    # start the API
+curl http://localhost:8000/health                    # health check
+```
+
+---
+
+## Example API Request
+
+```bash
+curl -X POST "http://localhost:8000/triage?mode=agentic_llm" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customer_id": "CUST-1001",
+    "issue_text": "Customer says the invoice amount is wrong and may cancel.",
+    "channel": "email"
+  }'
+```
+
+Example response fields:
+
+```json
+{
+  "issue_type": "billing_dispute",
+  "urgency": "high",
+  "customer_tier": "premium",
+  "escalation_required": true,
+  "tools_called": [
+    { "tool_name": "search_internal_docs" },
+    { "tool_name": "get_customer_profile" },
+    { "tool_name": "check_sla_policy" },
+    { "tool_name": "create_ticket_draft" }
+  ],
+  "run_id": "…",
+  "mode": "agentic_llm",
+  "latency_ms": 8
+}
+```
+
+---
+
+## Docker
+
+```bash
+docker compose build
+docker compose up
+curl http://localhost:8000/health
+```
+
+The `.env` file is not baked into the image; it is injected at runtime via `env_file`, and run logs are persisted outside the container through a volume mount.
+
+---
+
+## Project Structure
+
+```text
+app/
+  core/           configuration and settings
+  graph/          LangGraph workflow definitions and nodes
+  rag/            document loading, chunking, and TF-IDF retrieval
+  schemas/        Pydantic request, response, state, and evaluation schemas
+  services/       LLM service, simple RAG service, and run logging
+  tools/          typed tools for customer, SLA, ticket, and retrieval actions
+  main.py         FastAPI application entry point
+
+data/
+  internal_docs/       internal policy documents (markdown)
+  mock_customers.json  mock customer database
+
+evals/
+  dataset.jsonl               30-case evaluation dataset
+  dataset_10case_smoke.jsonl  10-case smoke dataset
+  run_eval.py                 per-mode evaluation runner
+  compare_results.py          mock-mode comparison report
+  compare_openai_30case.py    mock vs OpenAI comparison report
+  results/                    generated result files and reports
+
+logs/
+  runs.jsonl           run logs (gitignored)
+```
+
+---
+
+## Limitations
+
+- The evaluation dataset is synthetic and designed for portfolio demonstration.
+- The customer database is a static mock JSON file.
+- Retrieval uses TF-IDF for simplicity and reproducibility rather than embedding-based vector search.
+- Real OpenAI latency varies with network conditions and model response behavior.
+- The tool-dependency metric checks expected tool order but does not fully validate every intermediate tool input and output.
+
+---
+
+## Future Improvements
+
+- Replace TF-IDF retrieval with embedding-based vector search.
+- Store customer profiles, tickets, and run logs in a database such as PostgreSQL.
+- Add authentication and role-based access control.
+- Add OpenTelemetry or LangSmith tracing for deeper observability.
+- Extend dependency validation to full tool input/output chains.
+- Expand the evaluation dataset with more realistic historical support tickets.
+- Add a lightweight frontend for reviewing triage results and traces.
+
+---
+
+## Current Status
+
+- **Week 0** — Project setup: FastAPI structure, health check, pytest, repo config.
+- **Week 1** — Domain schema design: typed request, response, issue category, urgency, tier, channel, and policy schemas.
+- **Week 2** — Business tool layer: typed tools for customer lookup, SLA checks, document search, and ticket drafting.
+- **Week 3** — RAG retrieval: document loading, chunking, and TF-IDF-based policy retrieval.
+- **Week 4** — LangGraph workflow MVP: end-to-end deterministic triage workflow.
+- **Week 5** — LLM integration: `simple_rag`, `baseline`, and `agentic_llm` modes through one endpoint.
+- **Week 6** — Observability and deployment: run-level JSONL logging, `GET /runs/{run_id}`, latency tracking, Docker.
+- **Week 6.5** — Conditional routing: ticket creation triggered only when `escalation_required=true`.
+- **Week 7** — Evaluation framework: from a 10-case smoke test to a 30-case dataset, run in both mock mode and real OpenAI, confirming the agentic workflow preserves its structural advantages across providers.
+- **Week 8** — Portfolio polish: README, project structure, evaluation summaries, limitations, and future improvements.
